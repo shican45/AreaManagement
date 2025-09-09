@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.CityMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.City">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+            <result property="areaId" column="area_id" />
+            <result property="createTime" column="create_time" />
+            <result property="modifedTime" column="modifed_time" />
+    </resultMap>
+
+    <resultMap id="CityWithAddressResultMap" type="com.example.demo.entity.City" extends="BaseResultMap">
+        <collection property="addressList" ofType="com.example.demo.entity.Address"
+                    select="com.example.demo.mapper.AddressMapper.selectByCityId" column="id"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,area_id,create_time,modifed_time
+    </sql>
+    <select id="getCityList" parameterType="java.lang.String" resultMap="CityWithAddressResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from city
+    </select>
+    <select id="selectByAreaId" parameterType="java.lang.Integer" resultMap="CityWithAddressResultMap">
+        select * from city where area_id = #{areaId}
+    </select>
+    <select id="selectAreaIdListByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select DISTINCT area_id from city where name like concat("%",#{name},"%")
+    </select>
+    <insert id="addCity" keyColumn="id" keyProperty="id" parameterType="com.example.demo.entity.City">
+        insert into city (name,create_time)
+        values (#{name,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <update id="updateCityById" parameterType="com.example.demo.entity.City">
+        update city
+        set name = #{name,jdbcType=VARCHAR},
+            <if test="city.areaId != null and city.areaId != ''">
+                area_id = #{areaId,jdbcType=INTEGER},
+            </if>
+            modifed_time = #{modifedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateCityByIdForAreaId" parameterType="com.example.demo.entity.City">
+        update city
+        set area_id = #{areaId,jdbcType=INTEGER},
+            modifed_time = #{modifedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateCityByName" parameterType="java.lang.String">
+        update city
+        set name = #{name,jdbcType=VARCHAR}
+        where name = #{oldName,jdbcType=VARCHAR}
+    </update>
+    <delete id="deleteCityById" parameterType="java.lang.Integer">
+        delete from city
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+</mapper>

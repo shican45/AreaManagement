@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.AreaMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.demo.entity.Area">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+            <result property="createTime" column="create_time" />
+            <result property="modifedTime" column="modifed_time" />
+    </resultMap>
+
+    <resultMap id="AreaWithCityResultMap" type="com.example.demo.entity.Area" extends="BaseResultMap">
+        <collection property="cityList" ofType="com.example.demo.entity.City"
+                    select="com.example.demo.mapper.CityMapper.selectByAreaId" column="id"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,create_time,modifed_time
+    </sql>
+    <select id="getAreaList" parameterType="java.lang.String" resultMap="AreaWithCityResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from area
+    </select>
+    <select id="findArea" parameterType="com.example.demo.entity.AreaQueryVo" resultMap="AreaWithCityResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from area
+        where 1 = 1
+        <if test="areaQueryVo.name != null and areaQueryVo.name != ''">
+            and name like concat("%",#{areaQueryVo.name},"%")
+        </if>
+        <if test="areaQueryVo.city != null and areaQueryVo.city != ''">
+            and id in (
+                select DISTINCT area_id from city where name like concat("%",#{areaQueryVo.city},"%")
+            )
+        </if>
+        <if test="areaQueryVo.address != null and areaQueryVo.address != ''">
+            and id in (
+            select DISTINCT area_id from address where address like concat("%",#{areaQueryVo.address},"%")
+            )
+        </if>
+        <if test="areaQueryVo.startTime != null and areaQueryVo.startTime != ''">
+            and create_time >= #{areaQueryVo.startTime}
+        </if>
+        <if test="areaQueryVo.endTime != null and areaQueryVo.endTime != ''">
+            and create_time &lt;= #{areaQueryVo.endTime}
+        </if>
+    </select>
+    <insert id="addArea" keyColumn="id" keyProperty="id" parameterType="com.example.demo.entity.Area">
+        insert into area (id,name,create_time)
+        values (#{id,jdbcType=INTEGER},#{name,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <update id="updateArea" parameterType="com.example.demo.entity.Area">
+        update area
+        set name = #{name,jdbcType=VARCHAR},
+            modifed_time = #{modifedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <delete id="deleteAreaById" parameterType="java.lang.Integer">
+        delete from area
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+</mapper>
