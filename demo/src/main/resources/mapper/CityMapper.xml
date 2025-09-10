@@ -20,7 +20,7 @@
     <sql id="Base_Column_List">
         id,name,area_id,create_time,modifed_time
     </sql>
-    <select id="getCityList" parameterType="java.lang.String" resultMap="CityWithAddressResultMap">
+    <select id="getCityList" resultMap="CityWithAddressResultMap">
         select
         <include refid="Base_Column_List" />
         from city

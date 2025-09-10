@@ -14,7 +14,6 @@ import java.util.List;
 * @description 针对表【area】的数据库操作Service
 * @createDate 2025-09-04 22:49:19
 */
-@Service
 public interface AreaService {
     List<Area> getAllArea();
     List<Area> findArea(AreaQueryVo areaQueryVo);

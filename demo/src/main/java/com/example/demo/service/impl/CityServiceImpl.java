@@ -4,6 +4,7 @@ import com.example.demo.entity.City;
 import com.example.demo.service.CityService;
 import com.example.demo.mapper.CityMapper;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -20,7 +21,7 @@ import java.util.List;
 @Service
 public class CityServiceImpl implements CityService{
 
-    @Resource
+    @Autowired
     private CityMapper cityMapper;
 
     public List<City> getAllCity(){

@@ -10,6 +10,7 @@ import com.example.demo.service.AreaService;
 import com.example.demo.mapper.AreaMapper;
 import com.example.demo.util.IntIdGenerator;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,13 +33,13 @@ import java.text.SimpleDateFormat;
 @Service
 public class AreaServiceImpl implements AreaService{
 
-    @Resource
+    @Autowired
     private AreaMapper areaMapper;
 
-    @Resource
+    @Autowired
     private AddressMapper addressMapper;
 
-    @Resource
+    @Autowired
     private CityMapper cityMapper;
 
     public List<Area> getAllArea() {

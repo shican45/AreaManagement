@@ -21,9 +21,6 @@ public class CityController {
     @Autowired
     private CityService cityService;
 
-    @Resource
-    private CityMapper cityMapper;
-
     @GetMapping("/list")
     public  ResultVo getCityList(){
         return ResultVo.success(cityService.getAllCity());
